@@ -71,7 +71,7 @@ Master-Blaster Communication
   61 pins
 
 
-Master Ports
+## Master Ports
 
 ### input
 
@@ -105,4 +105,14 @@ Master Ports
 * 1D
 * 1E
 * 1F
+
+## Blaster Ports
+
+### input
+
+* 0 EXT_REQ-D0
+
+### output
+
+* 8 BB Serial / LEDs
 

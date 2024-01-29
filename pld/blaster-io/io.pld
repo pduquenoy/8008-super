@@ -1,0 +1,65 @@
+/* Original by Jim Loos. Modified by smbaker for H8 project */
+
+Name io;
+Partno G22V10#2;
+Revision;
+Date 09/1/2023;
+Designer Scott Baker;
+Company ;
+Location ;
+Assembly 8008 Supercomputer Master;
+Device G22V10;
+
+/* Inputs: */
+Pin 1  = !IORD;
+Pin 2  = !IOWR;
+Pin 3  = A9;
+Pin 4  = A10;
+Pin 5  = A11;
+Pin 6  = A12;
+Pin 7  = A13;
+Pin 8  = !POR;
+Pin 9  = !RUNNING;
+Pin 10 = !EXT_INT;
+Pin 11 = !EXT_CS;
+Pin 13 = !EXT_TAKEOVER;
+
+/* Outputs:  */
+Pin 23 = !LEDCS;
+Pin 22 = NC0;
+Pin 21 = NC1;
+Pin 20 = !EXT_REQ;      /* IN */
+Pin 19 = TAKEW;         /* IN */
+Pin 18 = !TAKEN;
+Pin 17 = CPUINT;
+Pin 16 = D0;
+Pin 15 = !LOCBUSEN;
+Pin 14 = !EXTBUSEN;
+
+/* Input/Output logic: */
+in0  = !A13 & !A12;
+out0 = !A13 &  A12;
+out1 =  A13 & !A12;
+out2 =  A13 &  A12;
+
+device0 = !A11 & !A10 & !A9;
+device1 = !A11 & !A10 &  A9;
+device2 = !A11 &  A10 & !A9;
+device3 = !A11 &  A10 &  A9;
+device4 =  A11 & !A10 & !A9;
+device5 =  A11 & !A10 &  A9;
+device6 =  A11 &  A10 & !A9;
+device7 =  A11 &  A10 &  A9;
+
+LEDCS = out0 & device0 & IOWR;
+INP0 = in0 & device0 & IORD;
+
+D0 = !EXT_REQ;
+D0.OE = INP0;
+
+TAKEN = (EXT_CS & EXT_TAKEOVER) # (EXT_CS & TAKEW);
+CPUINT = POR # EXT_INT;
+LOCBUSEN = RUNNING;
+EXTBUSEN = (EXT_CS & EXT_TAKEOVER) # (EXT_CS & TAKEW);
+
+
