@@ -1,0 +1,88 @@
+/* Original by Jim Loos. Modified by smbaker for H8 project */
+
+Name io;
+Partno G22V10#2;
+Revision;
+Date 09/1/2023;
+Designer Scott Baker;
+Company ;
+Location ;
+Assembly 8008 Supercomputer Master;
+Device G22V10;
+
+/* Inputs: */
+Pin 1  = !IORD;
+Pin 2  = !IOWR;
+Pin 3  = A9;
+Pin 4  = A10;
+Pin 5  = A11;
+Pin 6  = A12;
+Pin 7  = A13;
+Pin 8  = !RESET;
+Pin 9  = DBD;
+Pin 10 = !ROMCS;
+Pin 11 = !EXTCS;
+Pin 13 = NC3;
+
+/* Outputs:  */
+Pin 23 = !EXT_STAT_W;
+Pin 22 = !OUTP0;
+Pin 21 = !INP0; /* !PORT_W; */
+Pin 20 = !OUTMMAP;
+Pin 19 = START;
+Pin 18 = !UARTCS;
+Pin 17 = !EXT_STAT_R;
+Pin 16 = !RAMCS;
+Pin 15 = !PORT_OUT;
+Pin 14 = !PORT_IN;
+
+/* Input/Output logic: */
+in0  = !A13 & !A12;
+out0 = !A13 &  A12;
+out1 =  A13 & !A12;
+out2 =  A13 &  A12;
+
+device0 = !A11 & !A10 & !A9;
+device1 = !A11 & !A10 &  A9;
+device2 = !A11 &  A10 & !A9;
+device3 = !A11 &  A10 &  A9;
+device4 =  A11 & !A10 & !A9;
+device5 =  A11 & !A10 &  A9;
+device6 =  A11 &  A10 & !A9;
+device7 =  A11 &  A10 &  A9;
+
+OUTP0 = out0 & device0 & IOWR;
+INP0 = in0 & device0 & IORD;
+INP1 = in0 & device1 & IORD; /* not assigned to any pin -- used to signal start */
+
+UARTCS = (out1 & (device2 # device3)) # (in0 & (device2 # device3));
+
+OUTMMAP = out0 & 
+          (device4 # device5 # device6 # device7) &
+          IOWR;
+
+EXT_STAT_W = out1 & (device4 # device5 # device6 # device7) & IOWR;
+
+EXT_STAT_R = in0 & (device4) & IORD;
+
+PORT_IN = in0 & IORD;                                /* IORD to port devices: all ports */
+/* PORT_W = (out0 # out1 # out2) & IOWR; */
+PORT_OUT = !PORT_IN;                                 /* always OUT unless we're doing PORT_IN */
+
+/* simulated SR flip-flop made up of cross-connected NAND gates.
+ * the flip-flop is set when the reset signal from the DS1233 goes low
+ * (power-on-reset) and cleared when input ports 0 or 1 are accessed.
+ * when set, the flip-flop forces all memory accesses to select the 
+ * EPROM. when reset, the flip-flop permits the normal memory map.
+ *
+ * This is also used to enable the bank switcher if it is present. If
+ * START is high, the bank switcher is disabled and ROM 0x0000-0x0FFF
+ * will be present in all four banks. If START is low, then the bank
+ * switcher will select ROM or RAM is appropriate. Do NOT enable the
+ * bank switcher until you've set the bank registers.
+ */
+
+START = RESET # (START & !INP1);
+
+/* Memory   */
+RAMCS = !ROMCS & !EXTCS;          /* allow the memory mapper to determine ROM/RAM   */
