@@ -18,7 +18,7 @@ Pin 4 = SYNC;       /* SYNC signal from 8008 pin 14         */
 Pin 5 = CC1;        /* control code from 74LS273 #2 pin 5   */
 Pin 6 = CC2;        /* control code from 74LS273 #2 pin 2   */
 Pin 7 = PHASE2;
-Pin 8 = NC0;
+Pin 8 = !EXT_INT;   /* was NC0 NC0; */
 Pin 9 = !EXT_CS;
 Pin 10 = !EXT_RD;
 Pin 11 = !EXT_WR;
@@ -26,13 +26,13 @@ Pin 13 = !TAKEN;
 
 /* Outputs:   */
 Pin 23 = !RUNNING;   /* Output to "Running" LED  ... was !RUNNING            */ 
-Pin 22 = ALL;        /* 74LS273 #1 Address Latch Low strobe  */
+Pin 22 = ALL;        /* 74LS273 #1 Ad`1dress Latch Low strobe  */
 Pin 21 = ALH;        /* 74LS273 #2 Address Latch High strobe */
 Pin 20 = !MEMRD;     /* Memory Read strobe                   */
 Pin 19 = !MEMWR;     /* Memory Write strobe                  */
 Pin 18 = !IORD;      /* IO Read to IO PLD                    */
 Pin 17 = !IOWR;      /* IO Write to IO PLD                   */
-Pin 16 = NC1;
+Pin 16 = !INTREQ;    /* FOR NEW BOARD VERSION MAKE THIS !INTACK   ****** */
 Pin 15 = LOSTIT;     /* Simulated M1 signal                  */
 Pin 14 = DBD;        /* 74LS245 Data Bus Direction control   */
 
@@ -64,11 +64,14 @@ MEMRD = (t3 & (pci # pcr) & SYNC) # (EXT_CS & EXT_RD);
 MEMWR = (t3 & pcw & !SYNC & PHASE2) # (EXT_CS & EXT_WR);
 
 /* LOSTIT simulates a flipflop that is true if SYNC is released during IO Read and persists until the end of T3 */
-LOSTIT = (IORD & !SYNC) # (LOSTIT & t3); 
+LOSTIT = (IORD & !SYNC) # (LOSTIT & t3);
 
 /* Note: See note in master-bus/bus.pld about not guarding IOR/IOW with in/out
  */
 
 IORD = t3 & pcc & SYNC & (!LOSTIT);
 IOWR = t3 & pcc & !SYNC & PHASE2;
+
+INTACK = t1i & !SYNC & PHASE2;
+INTREQ = (EXT_INT & stopped) # (INTREQ & !INTACK);
 
