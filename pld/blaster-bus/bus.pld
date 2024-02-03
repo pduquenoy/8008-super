@@ -60,8 +60,8 @@ ALL  = (t1 # t1i) & !SYNC & PHASE2;
 ALH  = t2 & !SYNC & PHASE2;
 
 /* memory and I/O strobes */
-MEMRD = (t3 & (pci # pcr) & SYNC) # (EXT_CS & EXT_RD);
-MEMWR = (t3 & pcw & !SYNC & PHASE2) # (EXT_CS & EXT_WR);
+MEMRD = (t3 & (pci # pcr) & SYNC) # (TAKEN & EXT_RD);
+MEMWR = (t3 & pcw & !SYNC & PHASE2) # (TAKEN & EXT_WR);
 
 /* LOSTIT simulates a flipflop that is true if SYNC is released during IO Read and persists until the end of T3 */
 LOSTIT = (IORD & !SYNC) # (LOSTIT & t3);
