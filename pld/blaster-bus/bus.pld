@@ -32,7 +32,7 @@ Pin 20 = !MEMRD;     /* Memory Read strobe                   */
 Pin 19 = !MEMWR;     /* Memory Write strobe                  */
 Pin 18 = !IORD;      /* IO Read to IO PLD                    */
 Pin 17 = !IOWR;      /* IO Write to IO PLD                   */
-Pin 16 = !INTREQ;    /* FOR NEW BOARD VERSION MAKE THIS !INTACK   ****** */
+Pin 16 = !INTACK;    /* FOR OLD BOARD VERSION THIS WAS !INTREQ   ****** */
 Pin 15 = LOSTIT;     /* Simulated M1 signal                  */
 Pin 14 = DBD;        /* 74LS245 Data Bus Direction control   */
 
@@ -73,5 +73,5 @@ IORD = t3 & pcc & SYNC & (!LOSTIT);
 IOWR = t3 & pcc & !SYNC & PHASE2;
 
 INTACK = t1i & !SYNC & PHASE2;
-INTREQ = (EXT_INT & stopped) # (INTREQ & !INTACK);
+/* INTREQ = (EXT_INT & stopped) # (INTREQ & !INTACK); */
 
