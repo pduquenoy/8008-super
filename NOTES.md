@@ -1,3 +1,5 @@
+## original idea
+
 Problem - Conway's game of life. Allocate 8 CPUs, and have each CPU tackle 2 rows.
 
 Blaster (Worker)
@@ -79,7 +81,7 @@ Master-Blaster Communication
 * 1 unused / reading from this will signal "start"
 * 2 8251 UART - data
 * 3 8251 UART - control
-* 4 EXT_STAT_R - RUN_RD
+* 4 EXT_STAT_R - RUN_RD  (second revision moves this to port 1 or 5)
 
 ### output
 
@@ -115,4 +117,37 @@ Master-Blaster Communication
 ### output
 
 * 8 BB Serial / LEDs
+
+## The interrupt problem
+
+Original plan was to halt, and then wake up the CPU with an INT. According to the
+datasheet. If in a halted state, the CPU should wake up on interrupt and enter
+state T1i (instead of T1). Oscilloscope traces showed this happening the majority
+of the time. Then the CPU will go on its merry way, executing T2, T3, etc. The
+T1i state works exactly like T1 except that the PC is not incremented. Thus, I
+expected it to wake up and execute the next instruction ... twice. In my source
+code I inserted a NOP because if we're going to execute the next instruction
+twice, then it better not do anything. This was the plan.
+
+However, I noticed two oscilloscope traces that showed problems.
+
+1. One trace showed the CPU enter T1 instead of T1i. It then executed a T2 and
+   a T3 and then after T3 it entered T1i. So ... some instruction was
+   executed before the interrupt was acknowledged. Was it the NOP? Who knows.
+
+2. Another trace showed the CPU enter T1, briefly enter Ti1 (during the O2
+   clock) and then re-enter T1. It's like this tiny little spec of T1i was
+   embedded in a T1. After T1 it executed T2 and then wait (why? Ready was
+   pulled up to +5V). After the Wait it did T3 and then finally entered
+   T1i. Overall, similar to Case 1.
+
+I also tried resetting my interrupt on Running instead of on the intack
+cycle. My theory was that if something is wonky with these intack pulses,
+then perhaps I could just drop the Int when we started running. This did not
+work, and I suspect the CPU is sampling INT at the start of the T1 cycle to
+know whether to go into T1 or T1i. If you drop INT too soon, then it will
+executed a T1 rather than T1i, and leave itself halted.
+
+My suspicion is maybe this has to do with the noncompliant clock design
+in the Bayles and Loos projects, which I inherited into my project. 
 

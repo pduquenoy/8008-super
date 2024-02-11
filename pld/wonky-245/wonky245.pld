@@ -29,6 +29,23 @@ PIN 18 = Q1;
 PIN 19 = Q0;
 PIN 20 = VCC;
 
+/* this implementation drives them up or down. */
+/* it assumes no pullups. */
+
+Q0 = D0 # (!INT_WR);
+Q1 = D1 # (!INT_WR);
+Q2 = D2 # (!INT_WR);
+Q3 = D3 # (!INT_WR);
+Q4 = D4 # (!INT_WR);
+Q5 = D5 # (!INT_WR);
+Q6 = D6 # (!INT_WR);
+Q7 = D7 # (!INT_WR);
+
+/*
+
+/* this implementation uses open collector outputs. */
+/* it assumes pullups. */
+
 Q0 = D0;
 Q1 = D1;
 Q2 = D2;
@@ -46,6 +63,7 @@ Q4.OE = INT_WR;
 Q5.OE = INT_WR;
 Q6.OE = INT_WR;
 Q7.OE = INT_WR;
+*/
 
 
 

@@ -81,7 +81,8 @@ MEMWR = t3 & pcw & !SYNC & PHASE2;
 EXT_WRP = t3 & pcw & !SYNC;
 
 /* LOSTIT simulates a flipflop that is true if SYNC is released during IO Read and persists until the end of T3 */
-LOSTIT = (IORD & !SYNC) # (LOSTIT & t3); 
+LOSTIT = (IORD & !SYNC) # (LOSTIT & t3);
+/* LOSTIT = (IOWR & SYNC) # (IORD & !SYNC) # (LOSTIT & t3);    idea... */
 
 /* Note: If you don't guard IORD and IOWR with in0 and out0/out1/out2 then you will
  *       get spurious IORD and IOWR pulses.
