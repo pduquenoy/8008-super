@@ -19,10 +19,10 @@ Pin 5  = A11;
 Pin 6  = A12;
 Pin 7  = A13;
 Pin 8  = !RESET;
-Pin 9  = DBD;
+Pin 9  = !EXT_WRP;   /* Cut trace and bodge to exc_wrp */
 Pin 10 = !ROMCS;
 Pin 11 = !EXTCS;
-Pin 13 = NC3;
+Pin 13 = !TAKEW;     /* bodge to TAKEW */
 
 /* Outputs:  */
 Pin 23 = !EXT_STAT_W;
@@ -84,5 +84,7 @@ PORT_OUT = !PORT_IN;                                 /* always OUT unless we're 
 
 START = RESET # (START & !INP1);
 
-/* Memory   */
-RAMCS = !ROMCS & !EXTCS;          /* allow the memory mapper to determine ROM/RAM   */
+/* RAM is selected if not ROM and not EXTERNAL,
+ * ... or if EXTERN and TAKEW and we're about to write
+ */
+RAMCS = (!ROMCS & !EXTCS) # (EXTCS & TAKEW & EXT_WRP);
