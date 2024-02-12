@@ -27,7 +27,7 @@ Pin 13 = !TAKEW;     /* bodge to TAKEW */
 /* Outputs:  */
 Pin 23 = !EXT_STAT_W;
 Pin 22 = !OUTP0;
-Pin 21 = !INP0; /* !PORT_W; */
+Pin 21 = NC0;
 Pin 20 = !OUTMMAP;
 Pin 19 = START;
 Pin 18 = !UARTCS;
@@ -52,7 +52,6 @@ device6 =  A11 &  A10 & !A9;
 device7 =  A11 &  A10 &  A9;
 
 OUTP0 = out0 & device0 & IOWR;
-INP0 = in0 & device0 & IORD;
 INP1 = in0 & device1 & IORD; /* not assigned to any pin -- used to signal start */
 
 UARTCS = (out1 & (device2 # device3)) # (in0 & (device2 # device3));
@@ -63,7 +62,15 @@ OUTMMAP = out0 &
 
 EXT_STAT_W = out1 & (device4 # device5 # device6 # device7) & IOWR;
 
-EXT_STAT_R = in0 & (device4) & IORD;
+/* EXT_STAT_R handles the following input ports
+ *   0 - dipswitches
+ *   1 - RUN_RD
+ *   2,3 - reserved for serial port
+ *
+ * If we wanted to, we could also put 6,7 down here
+ */
+
+EXT_STAT_R = in0 & (device0 # device1) & IORD;
 
 PORT_IN = in0 & IORD;                                /* IORD to port devices: all ports */
 /* PORT_W = (out0 # out1 # out2) & IOWR; */
