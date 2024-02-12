@@ -149,5 +149,11 @@ know whether to go into T1 or T1i. If you drop INT too soon, then it will
 executed a T1 rather than T1i, and leave itself halted.
 
 My suspicion is maybe this has to do with the noncompliant clock design
-in the Bayles and Loos projects, which I inherited into my project. 
+in the Bayles and Loos projects, which I inherited into my project.
+
+Tried switching from D8008 to D8008-1 and experienced no difference.
+
+The problem does not seem to exist when resetting the CPU. In this case we
+force the address registers to 0 where we execute an RST instruction. That seems
+to work reliably 100% of the time.
 
