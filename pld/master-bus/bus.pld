@@ -61,6 +61,7 @@ out1 =  A13 & !A12;
 out2 =  A13 &  A12;
 
 /* address and data bus */
+
 DBD = (t1 # t1i # t2 # t3) & !SYNC;
 ALL  = (t1 # t1i) & !SYNC & PHASE2;
 ALH  = t2 & !SYNC & PHASE2;

@@ -55,6 +55,13 @@ pcc =  CC1 & !CC2;            /* I/O Operation */
 pcw =  CC1 &  CC2;            /* Memory Write */
 
 /* address and data bus */
+
+/* alternatively, 
+ *     DBD=!(t3 & SYNC);
+ * We could just set DBD to input only when we're reading. Tried this. Made no
+ * difference to stability issue.
+ */
+
 DBD = (t1 # t1i # t2 # t3) & !SYNC;
 ALL  = (t1 # t1i) & !SYNC & PHASE2;
 ALH  = t2 & !SYNC & PHASE2;

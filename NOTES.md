@@ -157,3 +157,14 @@ The problem does not seem to exist when resetting the CPU. In this case we
 force the address registers to 0 where we execute an RST instruction. That seems
 to work reliably 100% of the time.
 
+Tracked down the problem to a coincidence between the O1 clock and the
+INT line. If INT goes up at approximately the time O1 goes down, then bad
+things will happen. See blaster-cpuint-before-clk1.png, blaster-cpuint-on-clk1.png,
+and blaster-cpuint-after-clk1.png.
+
+Problem solved by using the spare flipflop on the second revision board to
+clock in the interrupt signal on the rise of O2, which can't possibly be
+anywhere near the fall of O1. Changed this to clock on the rise on O1
+consistent with Len Bayles project. I think it's sufficient that it just doesn't
+happen on the fall of O1. The rise of O1 is fine.
+
